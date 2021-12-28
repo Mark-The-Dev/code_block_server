@@ -46,4 +46,10 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "userId")
     List<NeighborEntity> neighborEntities;
+
+    @OneToMany(mappedBy = "user")
+    List<ChatParticipantEntity> chatParticipantEntities;
+
+    @OneToMany(mappedBy = "user")
+    List<ChatMessageEntity> chatMessageEntities;
 }
