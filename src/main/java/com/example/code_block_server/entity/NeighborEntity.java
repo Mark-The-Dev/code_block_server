@@ -7,30 +7,29 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-@Entity(name = "tech_topics")
+@Entity(name = "neighbors")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TechTopicEntity {
+public class NeighborEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "topic_name")
-    private String topicName;
-
-    @Column(name = "topic_info")
-    private String topicInfo;
+    @Column(name = "status")
+    private String status;
 
     @Column(name = "created_at")
     private Date createdAt;
 
-    @OneToMany(mappedBy = "techTopic")
-    private List<TopicArticleEntity> topicArticleEntities;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userId;
 
-    @OneToMany(mappedBy = "techTopic")
-    private List<TopicSubscriptionEntity> topicSubscriptionEntities;
+    @ManyToOne
+    @JoinColumn(name = "neighbor_id")
+    private UserEntity neighborId;
+
 }

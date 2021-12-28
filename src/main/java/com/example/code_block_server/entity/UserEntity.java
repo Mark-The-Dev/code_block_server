@@ -40,4 +40,10 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user")
     private List<TopicArticleEntity> topicArticleEntities;
+
+    @OneToMany(mappedBy = "user")
+    private List<TopicSubscriptionEntity> topicSubscriptionEntities;
+
+    @OneToMany(mappedBy = "userId")
+    List<NeighborEntity> neighborEntities;
 }
