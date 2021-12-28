@@ -76,5 +76,39 @@ CREATE TABLE chat_messages
 );
 
 
--- INPUT Seeded data
+-- Input initial seeded table data.
+INSERT INTO users (id, email, password, first_name, last_name)
+VALUES
+(1, 'swifttactics@gmail.com', '$2b$10$25U4.TNlydosWSx8zZBx6eT/yO3sBccYxpGNbE2ouhEm7sbgxteZu', 'Mark', 'Marcello'),
+(2, 'alifastith@gmail.com', '$2b$10$25U4.TNlydosWSx8zZBx6eT/yO3sBccYxpGNbE2ouhEm7sbgxteZu', 'Alia', 'Stith');
 
+
+INSERT INTO tech_topics (id, topic_name, topic_info) VALUES
+(1, 'C++', 'This is a fun language that everyone should learn'),
+(2, 'Java', 'Arguably the best programming language ever created, If you know this language you will be a strong programmer.'),
+(3, 'JavaScript', 'This language is okay.');
+
+INSERT INTO topic_articles (id, tech_topic_id, author, title, post_body) VALUES
+(1, 1, 2, 'C++ is awesome!', 'I would use this language everyday if I could'),
+(2, 2, 1, 'One Reason To Always Use Java!', 'Java is the best language!'),
+(3, 3, 1, 'JavaScript is Funny?', 'One JavaScript walked into the bar and asked the server for a drink.' ||
+                               ' When the server asked "what type?" JavaScript replied "It does not matter!"');
+
+INSERT INTO topic_subscriptions (id, tech_topic_id, user_id) VALUES
+(1, 1, 2),
+(2, 2, 1);
+
+INSERT INTO chat_rooms (id, room_name) VALUES
+(1, 'Mark-and-Ali Powwow');
+
+INSERT INTO chat_participants (id, chat_room_id, user_id) VALUES
+(1, 1, 1),
+(2, 1, 2);
+
+INSERT INTO chat_messages (id, chat_room_id, user_id, message) VALUES
+(1, 1, 1, 'Hi there!'),
+(2, 1, 2, 'I like C++');
+
+INSERT INTO neighbors (id, user_id, neighbor_id, status) VALUES
+(1, 1, 2, 'Friends'),
+(2, 2, 1, 'Friends');
