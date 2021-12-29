@@ -14,7 +14,7 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        String msg = String.valueOf(message);
+        String msg = message.getPayload();
         System.out.println("Message is: " + msg);
 
         session.sendMessage(new TextMessage("Thanks for the message!"));
