@@ -60,6 +60,7 @@ CREATE TABLE chat_participants
     id serial PRIMARY KEY,
     chat_room_id serial REFERENCES chat_rooms (id),
     user_id serial REFERENCES users (id),
+    is_active BOOLEAN default false,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     unread_at TIMESTAMP
