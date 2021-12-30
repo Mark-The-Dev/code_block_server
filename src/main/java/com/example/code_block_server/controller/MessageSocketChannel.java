@@ -24,17 +24,9 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
         System.out.println("Message is: " + msg);
 
         MessageDTO messageDTO = objectMapper.readValue(msg, MessageDTO.class);
+        System.out.println(messageDTO.getId());
         System.out.println(messageDTO.getBody());
 
         session.sendMessage(new TextMessage(msg));
-    }
-
-    @Override
-    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
-        MessageDTO messageDTO = (MessageDTO) SerializationUtils.deserialize(message.getPayload().array());
-
-        System.out.println(messageDTO.getBody());
-
-        session.sendMessage(message);
     }
 }

@@ -7,7 +7,6 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 
 @Configuration
 @EnableWebSocket
-// Add this annotation to an @Configuration class to configure processing WebSocket requests
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Override
