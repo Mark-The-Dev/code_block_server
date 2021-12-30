@@ -21,8 +21,14 @@ public class ChatParticipantEntity {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @Column(name = "updated_at")
+    private Date updatedAt;
+
     @Column(name = "unread_at")
     private Date unreadAt;
+
+    @Column(name = "is_active")
+    private boolean isActive;
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id")

@@ -24,6 +24,9 @@ public class ChatMessageEntity {
     @Column(name = "unread_at")
     private Date unreadAt;
 
+    @Column(name = "message")
+    private String message;
+
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoomEntity chatRoom;
