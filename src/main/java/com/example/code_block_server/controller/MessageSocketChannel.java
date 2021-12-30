@@ -1,5 +1,7 @@
 package com.example.code_block_server.controller;
 
+import com.example.code_block_server.dto.MessageDTO;
+import org.springframework.util.SerializationUtils;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -23,6 +25,10 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
 
     @Override
     protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+        MessageDTO messageDTO = (MessageDTO) SerializationUtils.deserialize(message.getPayload().array());
 
+        System.out.println(messageDTO.getBody());
+
+        session.sendMessage((WebSocketMessage<?>) messageDTO);
     }
 }
