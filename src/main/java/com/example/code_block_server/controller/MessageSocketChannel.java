@@ -1,5 +1,6 @@
 package com.example.code_block_server.controller;
 
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -18,5 +19,10 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
         System.out.println("Message is: " + msg);
 
         session.sendMessage(new TextMessage("Thanks for the message!"));
+    }
+
+    @Override
+    protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws Exception {
+
     }
 }
