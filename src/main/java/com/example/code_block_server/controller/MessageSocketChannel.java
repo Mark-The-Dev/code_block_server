@@ -29,6 +29,6 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
 
         System.out.println(messageDTO.getBody());
 
-        session.sendMessage((WebSocketMessage<?>) messageDTO);
+        session.sendMessage(message);
     }
 }
