@@ -11,6 +11,8 @@ import org.springframework.web.socket.handler.AbstractWebSocketHandler;
 
 public class MessageSocketChannel extends AbstractWebSocketHandler {
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         super.handleMessage(session, message);
@@ -21,11 +23,10 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
         String msg = message.getPayload();
         System.out.println("Message is: " + msg);
 
-        ObjectMapper objectMapper = new ObjectMapper();
         MessageDTO messageDTO = objectMapper.readValue(msg, MessageDTO.class);
         System.out.println(messageDTO.getBody());
 
-        session.sendMessage(message);
+        session.sendMessage(new TextMessage(msg));
     }
 
     @Override
