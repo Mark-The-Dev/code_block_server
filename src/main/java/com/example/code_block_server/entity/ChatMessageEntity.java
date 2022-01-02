@@ -21,9 +21,6 @@ public class ChatMessageEntity {
     @Column(name = "created_at")
     private Date createdAt;
 
-    @Column(name = "unread_at")
-    private Date unreadAt;
-
     @Column(name = "message")
     private String message;
 
