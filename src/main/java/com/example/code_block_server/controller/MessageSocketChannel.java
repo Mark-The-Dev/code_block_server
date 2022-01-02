@@ -1,6 +1,7 @@
 package com.example.code_block_server.controller;
 
 import com.example.code_block_server.dto.MessageDTO;
+import com.example.code_block_server.dto.ServerMessageDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.util.SerializationUtils;
 import org.springframework.web.socket.BinaryMessage;
@@ -23,9 +24,10 @@ public class MessageSocketChannel extends AbstractWebSocketHandler {
         String msg = message.getPayload();
         System.out.println("Message is: " + msg);
 
-        MessageDTO messageDTO = objectMapper.readValue(msg, MessageDTO.class);
-        System.out.println(messageDTO.getId());
-        System.out.println(messageDTO.getBody());
+        ServerMessageDTO serverMessage = objectMapper.readValue(msg, ServerMessageDTO.class);
+        // TODO: Save values into repository.
+
+        // TODO: Create new ClientMessageDTO to send to the client.
 
         session.sendMessage(new TextMessage(msg));
     }
