@@ -1,5 +1,6 @@
 package com.example.code_block_server.auth;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import com.example.code_block_server.dto.AuthPacket;
 import com.example.code_block_server.dto.LoginForm;
 import com.example.code_block_server.entity.UserEntity;
@@ -27,6 +28,9 @@ public class AuthenticationService {
         if (userEntity == null ||!loginForm.getPassword().equals(userEntity.getPassword())) {
             throw new IllegalArgumentException("There was an issue with the user name or password");
         }
+
+        String pwCheck = BCrypt.withDefaults().hashToString(10, "test123".toCharArray());
+        System.out.println(pwCheck);
 
         long userId = userEntity.getId();
         String authToken = generateJwtString(String.valueOf(userId));
