@@ -23,6 +23,8 @@ public class AuthenticationService {
 
     public AuthPacket processLogin(LoginForm loginForm) {
 
+        System.out.println(loginForm);
+
         UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail());
 
         if (userEntity == null ||!loginForm.getPassword().equals(userEntity.getPassword())) {

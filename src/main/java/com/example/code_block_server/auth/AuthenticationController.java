@@ -20,6 +20,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public AuthPacket userLogin(@RequestBody LoginForm loginForm){
+        System.out.println("made it");
         return authenticationService.processLogin(loginForm);
 
     }
