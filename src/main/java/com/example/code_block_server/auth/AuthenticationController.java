@@ -1,5 +1,7 @@
 package com.example.code_block_server.auth;
 
+import com.example.code_block_server.dto.AuthPacket;
+import com.example.code_block_server.dto.LoginForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,9 +19,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public String userLogin(@RequestBody String email,
-                            @RequestBody String password){
-        return authenticationService.processLogin(email, password);
+    public AuthPacket userLogin(@RequestBody LoginForm loginForm){
+        return authenticationService.processLogin(loginForm);
 
     }
 }

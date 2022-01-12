@@ -1,5 +1,7 @@
 package com.example.code_block_server.auth;
 
+import com.example.code_block_server.dto.AuthPacket;
+import com.example.code_block_server.dto.LoginForm;
 import com.example.code_block_server.entity.UserEntity;
 import com.example.code_block_server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +20,18 @@ public class AuthenticationService {
         this.userRepository = userRepository;
     }
 
-    public String processLogin(String email, String password) {
+    public AuthPacket processLogin(LoginForm loginForm) {
 
-        UserEntity userEntity = userRepository.findByEmail(email);
+        UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail());
 
-        if (userEntity == null ||!password.equals(userEntity.getPassword())) {
+        if (userEntity == null ||!loginForm.getPassword().equals(userEntity.getPassword())) {
             throw new IllegalArgumentException("There was an issue with the user name or password");
         }
 
-        return generateJwtString(String.valueOf(userEntity.getId()));
+        long userId = userEntity.getId();
+        String authToken = generateJwtString(String.valueOf(userId));
+
+        return new AuthPacket(userId, authToken);
     }
 
 }
