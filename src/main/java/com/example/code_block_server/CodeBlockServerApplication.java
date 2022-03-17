@@ -13,9 +13,9 @@ public class CodeBlockServerApplication {
     public static void main(String[] args) throws GeneralSecurityException, IOException {
 
         SpringApplication.run(CodeBlockServerApplication.class, args);
+        EncryptionUtils.registerEncryptionConfig();
 
-        if (!EncryptionUtils.keySetFileExists()) {
-            EncryptionUtils.generateKeySet();
-        }
+        // TODO: remove this
+        EncryptionUtils.testEncryptDecrypt();
     }
 }
