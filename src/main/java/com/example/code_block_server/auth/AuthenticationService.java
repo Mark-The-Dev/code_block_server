@@ -6,6 +6,8 @@ import com.example.code_block_server.dto.RegisterForm;
 import com.example.code_block_server.entity.UserEntity;
 import com.example.code_block_server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +29,6 @@ public class AuthenticationService {
 
     public AuthPacket processLogin(LoginForm loginForm) {
         UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail().toLowerCase());
-
         return performLogin(userEntity, loginForm.getPassword());
     }
 
@@ -45,6 +46,10 @@ public class AuthenticationService {
 
         UserEntity userEntity = userRepository.save(newUser);
         return performLogin(userEntity, registerForm.getPassword());
+    }
+
+    public void verifyAuthenticatedUser(long userId, String jwt) {
+        JwtUtils.verifyJwtString(jwt, String.valueOf(userId));
     }
 
     private AuthPacket performLogin (UserEntity userEntity, String password) {

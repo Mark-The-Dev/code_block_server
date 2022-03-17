@@ -16,11 +16,11 @@ public class JwtUtils {
                 .sign(Algorithm.HMAC512("secret"));
     }
 
-    public void verifyJwtString(String incomingJWT, String userSubject) {
+    public static void verifyJwtString(String incomingJWT, String userSubject) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256("secret");
+            Algorithm algorithm = Algorithm.HMAC512("secret");
             JWTVerifier verifier = JWT.require(algorithm)
-                    .withIssuer("auth0")
+                    .withIssuer("cdBlock")
                     .withSubject(userSubject)
                     .build();
             verifier.verify(incomingJWT);
