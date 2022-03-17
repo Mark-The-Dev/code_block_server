@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class UserEntity {
     private String lastName;
 
     @Column(name = "created_At")
-    private Date createdAt;
+    private ZonedDateTime createdAt;
 
     @Column(name = "updated_at")
-    private Date updatedAt;
+    private ZonedDateTime updatedAt;
 
     @OneToMany(mappedBy = "user")
     private List<TopicArticleEntity> topicArticleEntities;

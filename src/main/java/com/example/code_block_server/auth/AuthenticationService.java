@@ -2,11 +2,15 @@ package com.example.code_block_server.auth;
 
 import com.example.code_block_server.dto.AuthPacket;
 import com.example.code_block_server.dto.LoginForm;
+import com.example.code_block_server.dto.RegisterForm;
 import com.example.code_block_server.entity.UserEntity;
 import com.example.code_block_server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static com.example.code_block_server.auth.JwtUtils.generateJwtString;
 
@@ -22,10 +26,30 @@ public class AuthenticationService {
     }
 
     public AuthPacket processLogin(LoginForm loginForm) {
-        UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail());
+        UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail().toLowerCase());
 
-        boolean isValid = BCrypt.checkpw(loginForm.getPassword(), userEntity.getPassword());
-        if (userEntity == null || !isValid) {
+        return performLogin(userEntity, loginForm.getPassword());
+    }
+
+    public AuthPacket processRegister (RegisterForm registerForm) {
+        ZonedDateTime newTime = ZonedDateTime.now( ZoneId.of("UTC+00:00"));
+        String hashedPW = BCrypt.hashpw(registerForm.getPassword(), BCrypt.gensalt());
+
+        UserEntity newUser = new UserEntity();
+        newUser.setFirstName(registerForm.getFirstName());
+        newUser.setLastName(registerForm.getLastName());
+        newUser.setEmail(registerForm.getEmail().toLowerCase());
+        newUser.setPassword(hashedPW);
+        newUser.setCreatedAt(newTime);
+        newUser.setUpdatedAt(newTime);
+
+        UserEntity userEntity = userRepository.save(newUser);
+        return performLogin(userEntity, registerForm.getPassword());
+    }
+
+    private AuthPacket performLogin (UserEntity userEntity, String password) {
+        boolean isValid = BCrypt.checkpw(password, userEntity.getPassword());
+        if (!isValid) {
             throw new IllegalArgumentException("There was an issue with the user name or password");
         }
         long userId = userEntity.getId();
@@ -33,5 +57,6 @@ public class AuthenticationService {
 
         return new AuthPacket(userId, authToken);
     }
+
 
 }
