@@ -1,9 +1,7 @@
 package com.example.code_block_server.auth;
 
-import com.google.crypto.tink.Aead;
-import com.google.crypto.tink.KeyTemplates;
-import com.google.crypto.tink.KeysetHandle;
-import com.google.crypto.tink.aead.AeadConfig;
+import com.google.crypto.tink.*;
+import com.google.crypto.tink.hybrid.HybridConfig;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -15,24 +13,21 @@ public class EncryptionUtilsTest {
     @Test
     public void encryptAndDecrypt() throws GeneralSecurityException {
 
-        AeadConfig.register(); // Registering only Aead Primitive
+        HybridConfig.register();
 
-        Aead aead = KeysetHandle.generateNew(KeyTemplates.get("AES256_GCM"))
-                .getPrimitive(Aead.class);
+        KeysetHandle privateKeySetHandle = KeysetHandle.generateNew(
+                KeyTemplates.get("ECIES_P256_COMPRESSED_HKDF_HMAC_SHA256_AES128_GCM"));
+        KeysetHandle publicKeySetHandle = privateKeySetHandle.getPublicKeysetHandle();
+        HybridEncrypt encrypt = publicKeySetHandle.getPrimitive(HybridEncrypt.class);
+        HybridDecrypt decrypt = privateKeySetHandle.getPrimitive(HybridDecrypt.class);
 
-        String secretKey = "TinkIsNotCrazy;-)";
-
-        byte[] cipherText = aead.encrypt("Hello, World!".getBytes(StandardCharsets.UTF_8), secretKey.getBytes());
-        String encryptedText  = Base64.getEncoder().encodeToString(cipherText);
-
-        // Decrypting cipherText Works Fine
-        byte[] decrypted = aead.decrypt(cipherText, secretKey.getBytes());
-        System.out.println("decrypted from bytes: " + new String(decrypted));
-
-        // Decrypting encryptedText doesn't Work
-        decrypted = aead.decrypt(Base64.getDecoder().decode(encryptedText), secretKey.getBytes());
-        System.out.println("decrypted from converted string: " + new String(decrypted));
-
-        //assertEquals(decrypted, secretKey);
+        String inputString = "Hello, world!";
+        byte[] inputBytes = inputString.getBytes(StandardCharsets.UTF_8);
+        byte[] encryptedBytes1 = encrypt.encrypt(inputBytes, null);
+        String encryptedString  = Base64.getEncoder().encodeToString(encryptedBytes1);
+        byte[] encryptedBytes2 = Base64.getDecoder().decode(encryptedString);
+        byte[] decryptedBytes = decrypt.decrypt(encryptedBytes2, null);
+        String decryptedString = new String(decryptedBytes);
+        System.out.println("decrypted from converted string: " + decryptedString);
     }
 }
