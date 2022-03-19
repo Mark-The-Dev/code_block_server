@@ -7,6 +7,7 @@ import com.google.crypto.tink.hybrid.HybridConfig;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Base64;
 
 /*
  * Documentation:
@@ -34,11 +35,11 @@ public class EncryptionUtils {
         return  new PublicKeyDTO(privateKeySetHandle.getPublicKeysetHandle());
     }
 
-    public static String decrypt(byte[] input) throws IOException, GeneralSecurityException {
+    public static String decrypt(String input) throws IOException, GeneralSecurityException {
         KeysetHandle privateKeySetHandle = CleartextKeysetHandle.read(
                 JsonKeysetReader.withFile(new File(filePath)));
         HybridDecrypt hybridDecrypt = privateKeySetHandle.getPrimitive(HybridDecrypt.class);
-        byte[] decrypted = hybridDecrypt.decrypt(input, null);
+        byte[] decrypted = hybridDecrypt.decrypt(Base64.getDecoder().decode(input), null);
         return new String(decrypted);
     }
 }

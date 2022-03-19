@@ -12,6 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,8 +29,9 @@ public class EncryptionUtilsTest {
 
         String inputString = "Hello, world!";
         byte[] encryptedBytes = hybridEncrypt.encrypt(inputString.getBytes(StandardCharsets.UTF_8), null);
+        String encryptedString = Base64.getEncoder().encodeToString(encryptedBytes);
 
-        String decryptedString = EncryptionUtils.decrypt(encryptedBytes);
+        String decryptedString = EncryptionUtils.decrypt(encryptedString);
         assertEquals(inputString, decryptedString);
     }
 }

@@ -32,9 +32,10 @@ public class AuthenticationService {
         return EncryptionUtils.getPublicKey();
     }
 
-    public AuthPacket processLogin(LoginForm loginForm) {
+    public AuthPacket processLogin(LoginForm loginForm) throws GeneralSecurityException, IOException {
         UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail().toLowerCase());
-        return performLogin(userEntity, loginForm.getPassword());
+        String password = EncryptionUtils.decrypt(loginForm.getPassword());
+        return performLogin(userEntity, password);
     }
 
     public AuthPacket processRegister (RegisterForm registerForm) {
