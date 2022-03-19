@@ -1,11 +1,14 @@
 package com.example.code_block_server.auth;
 
 import com.example.code_block_server.dto.PublicKeyDTO;
+import com.google.crypto.tink.CleartextKeysetHandle;
 import com.google.crypto.tink.HybridEncrypt;
+import com.google.crypto.tink.JsonKeysetReader;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.hybrid.HybridConfig;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -19,7 +22,8 @@ public class EncryptionUtilsTest {
 
         HybridConfig.register();
         PublicKeyDTO publicKeyDTO = EncryptionUtils.getPublicKey();
-        KeysetHandle publicKeySetHandle = publicKeyDTO.getPublicKeySetHandle();
+        ByteArrayInputStream is = new ByteArrayInputStream(publicKeyDTO.getEncodedPublicKeySetHandle());
+        KeysetHandle publicKeySetHandle = CleartextKeysetHandle.read(JsonKeysetReader.withInputStream(is));
         HybridEncrypt hybridEncrypt = publicKeySetHandle.getPrimitive(HybridEncrypt.class);
 
         String inputString = "Hello, world!";

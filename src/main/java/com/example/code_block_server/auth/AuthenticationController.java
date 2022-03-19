@@ -5,6 +5,7 @@ import com.example.code_block_server.dto.LoginForm;
 import com.example.code_block_server.dto.RegisterForm;
 import com.example.code_block_server.dto.PublicKeyDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,13 +24,14 @@ public class AuthenticationController {
         this.authenticationService = authenticationService;
     }
 
-    @PostMapping("/public_key")
+    @GetMapping("/public_key")
     public PublicKeyDTO getPublicKey() throws GeneralSecurityException, IOException {
         return authenticationService.getPublicKey();
     }
 
     @PostMapping("/login")
-    public AuthPacket userLogin(@RequestBody LoginForm loginForm){
+    public AuthPacket userLogin(@RequestBody LoginForm loginForm) throws GeneralSecurityException, IOException {
+        System.out.println("made it");
         return authenticationService.processLogin(loginForm);
 
     }
