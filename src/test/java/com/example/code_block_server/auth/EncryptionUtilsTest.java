@@ -1,5 +1,6 @@
 package com.example.code_block_server.auth;
 
+import com.example.code_block_server.dto.PublicKeyDTO;
 import com.google.crypto.tink.HybridEncrypt;
 import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.hybrid.HybridConfig;
@@ -17,7 +18,8 @@ public class EncryptionUtilsTest {
     public void encryptAndDecrypt() throws GeneralSecurityException, IOException {
 
         HybridConfig.register();
-        KeysetHandle publicKeySetHandle = EncryptionUtils.getPublicKey();
+        PublicKeyDTO publicKeyDTO = EncryptionUtils.getPublicKey();
+        KeysetHandle publicKeySetHandle = publicKeyDTO.getPublicKeySetHandle();
         HybridEncrypt hybridEncrypt = publicKeySetHandle.getPrimitive(HybridEncrypt.class);
 
         String inputString = "Hello, world!";

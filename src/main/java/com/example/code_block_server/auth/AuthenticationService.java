@@ -3,16 +3,17 @@ package com.example.code_block_server.auth;
 import com.example.code_block_server.dto.AuthPacket;
 import com.example.code_block_server.dto.LoginForm;
 import com.example.code_block_server.dto.RegisterForm;
+import com.example.code_block_server.dto.PublicKeyDTO;
 import com.example.code_block_server.entity.UserEntity;
 import com.example.code_block_server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import static com.example.code_block_server.auth.JwtUtils.generateJwtString;
 
@@ -25,6 +26,10 @@ public class AuthenticationService {
             UserRepository userRepository
     ) {
         this.userRepository = userRepository;
+    }
+
+    public PublicKeyDTO getPublicKey() throws GeneralSecurityException, IOException {
+        return EncryptionUtils.getPublicKey();
     }
 
     public AuthPacket processLogin(LoginForm loginForm) {

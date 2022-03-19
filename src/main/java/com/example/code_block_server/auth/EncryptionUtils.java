@@ -1,5 +1,6 @@
 package com.example.code_block_server.auth;
 
+import com.example.code_block_server.dto.PublicKeyDTO;
 import com.google.crypto.tink.*;
 import com.google.crypto.tink.hybrid.HybridConfig;
 
@@ -27,10 +28,10 @@ public class EncryptionUtils {
         }
     }
 
-    public static KeysetHandle getPublicKey() throws IOException, GeneralSecurityException {
+    public static PublicKeyDTO getPublicKey() throws IOException, GeneralSecurityException {
         KeysetHandle privateKeySetHandle = CleartextKeysetHandle.read(
                 JsonKeysetReader.withFile(new File(filePath)));
-        return privateKeySetHandle.getPublicKeysetHandle();
+        return  new PublicKeyDTO(privateKeySetHandle.getPublicKeysetHandle());
     }
 
     public static String decrypt(byte[] input) throws IOException, GeneralSecurityException {
