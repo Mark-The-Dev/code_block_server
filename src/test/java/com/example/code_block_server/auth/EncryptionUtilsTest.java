@@ -1,33 +1,29 @@
 package com.example.code_block_server.auth;
 
-import com.google.crypto.tink.*;
+import com.google.crypto.tink.HybridEncrypt;
+import com.google.crypto.tink.KeysetHandle;
 import com.google.crypto.tink.hybrid.HybridConfig;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
-import java.util.Base64;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EncryptionUtilsTest {
 
     @Test
-    public void encryptAndDecrypt() throws GeneralSecurityException {
+    public void encryptAndDecrypt() throws GeneralSecurityException, IOException {
 
         HybridConfig.register();
-
-        KeysetHandle privateKeySetHandle = KeysetHandle.generateNew(
-                KeyTemplates.get("ECIES_P256_COMPRESSED_HKDF_HMAC_SHA256_AES128_GCM"));
-        KeysetHandle publicKeySetHandle = privateKeySetHandle.getPublicKeysetHandle();
-        HybridEncrypt encrypt = publicKeySetHandle.getPrimitive(HybridEncrypt.class);
-        HybridDecrypt decrypt = privateKeySetHandle.getPrimitive(HybridDecrypt.class);
+        KeysetHandle publicKeySetHandle = EncryptionUtils.getPublicKey();
+        HybridEncrypt hybridEncrypt = publicKeySetHandle.getPrimitive(HybridEncrypt.class);
 
         String inputString = "Hello, world!";
-        byte[] inputBytes = inputString.getBytes(StandardCharsets.UTF_8);
-        byte[] encryptedBytes1 = encrypt.encrypt(inputBytes, null);
-        String encryptedString  = Base64.getEncoder().encodeToString(encryptedBytes1);
-        byte[] encryptedBytes2 = Base64.getDecoder().decode(encryptedString);
-        byte[] decryptedBytes = decrypt.decrypt(encryptedBytes2, null);
-        String decryptedString = new String(decryptedBytes);
-        System.out.println("decrypted from converted string: " + decryptedString);
+        byte[] encryptedBytes = hybridEncrypt.encrypt(inputString.getBytes(StandardCharsets.UTF_8), null);
+
+        String decryptedString = EncryptionUtils.decrypt(encryptedBytes);
+        assertEquals(inputString, decryptedString);
     }
 }

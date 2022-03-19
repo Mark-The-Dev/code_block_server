@@ -11,11 +11,7 @@ import java.security.GeneralSecurityException;
 public class CodeBlockServerApplication {
 
     public static void main(String[] args) throws GeneralSecurityException, IOException {
-
         SpringApplication.run(CodeBlockServerApplication.class, args);
         EncryptionUtils.registerEncryptionConfig();
-
-        // TODO: remove this
-        EncryptionUtils.testEncryptDecrypt();
     }
 }
