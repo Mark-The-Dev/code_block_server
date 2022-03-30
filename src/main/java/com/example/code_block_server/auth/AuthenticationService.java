@@ -1,12 +1,18 @@
 package com.example.code_block_server.auth;
 
+import com.example.code_block_server.auth.JwtUtils.JWTUtil;
 import com.example.code_block_server.dto.AuthPacket;
 import com.example.code_block_server.dto.LoginForm;
 import com.example.code_block_server.dto.RegisterForm;
 import com.example.code_block_server.dto.PublicKeyDTO;
 import com.example.code_block_server.entity.UserEntity;
 import com.example.code_block_server.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -15,18 +21,13 @@ import java.time.ZonedDateTime;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import static com.example.code_block_server.auth.JwtUtils.generateJwtString;
-
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JWTUtil jwtUtil;
 
-    @Autowired
-    AuthenticationService(
-            UserRepository userRepository
-    ) {
-        this.userRepository = userRepository;
-    }
 
     public PublicKeyDTO getPublicKey() throws GeneralSecurityException, IOException {
         return EncryptionUtils.getPublicKey();
@@ -34,8 +35,7 @@ public class AuthenticationService {
 
     public AuthPacket processLogin(LoginForm loginForm) throws GeneralSecurityException, IOException {
         UserEntity userEntity = userRepository.findByEmail(loginForm.getEmail().toLowerCase());
-        String password = EncryptionUtils.decrypt(loginForm.getPassword());
-        return performLogin(userEntity, password);
+        return performLogin(userEntity, loginForm);
     }
 
     public AuthPacket processRegister (RegisterForm registerForm) {
@@ -51,22 +51,39 @@ public class AuthenticationService {
         newUser.setUpdatedAt(newTime);
 
         UserEntity userEntity = userRepository.save(newUser);
-        return performLogin(userEntity, registerForm.getPassword());
+
+        LoginForm loginForm = new LoginForm(userEntity.getEmail(), registerForm.getPassword());
+        return performLogin(userEntity, loginForm);
     }
 
-    public void verifyAuthenticatedUser(long userId, String jwt) {
-        JwtUtils.verifyJwtString(jwt, String.valueOf(userId));
+    /**
+     * Simple method to return the user entity that is attached to the jwt sent to the server.
+     * @return current authenticated user from JWT.
+     */
+    public UserEntity getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userRepository.findByEmail(authentication.getName());
     }
 
-    private AuthPacket performLogin (UserEntity userEntity, String password) {
-        boolean isValid = BCrypt.checkpw(password, userEntity.getPassword());
+    private AuthPacket performLogin (UserEntity userEntity, LoginForm loginForm) {
+        boolean isValid = BCrypt.checkpw(loginForm.getPassword(), userEntity.getPassword());
         if (!isValid) {
             throw new IllegalArgumentException("There was an issue with the user name or password");
         }
-        long userId = userEntity.getId();
-        String authToken = generateJwtString(String.valueOf(userId));
 
-        return new AuthPacket(userId, authToken);
+        try {
+            UsernamePasswordAuthenticationToken authInputToken =
+                    new UsernamePasswordAuthenticationToken(loginForm.getEmail(), loginForm.getPassword());
+
+            authenticationManager.authenticate(authInputToken);
+
+            String token = jwtUtil.generateToken(loginForm.getEmail());
+
+            return new AuthPacket(userEntity.getId(), token);
+        }catch (AuthenticationException authExc){
+            throw new RuntimeException("Invalid Login Credentials");
+        }
+
     }
 
 

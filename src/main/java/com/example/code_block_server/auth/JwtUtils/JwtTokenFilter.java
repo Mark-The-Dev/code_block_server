@@ -1,4 +1,4 @@
-package com.example.code_block_server.auth;
+package com.example.code_block_server.auth.JwtUtils;
 
 import com.example.code_block_server.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +23,12 @@ import static org.aspectj.util.LangUtil.isEmpty;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final UserRepository userRepo;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Autowired
-    public JwtTokenFilter(UserRepository userRepo) {
+    public JwtTokenFilter(UserRepository userRepo, JwtTokenUtil jwtTokenUtil) {
         this.userRepo = userRepo;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @Override
@@ -44,13 +46,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         // Get jwt token and validate
 
         final String token = header.split(" ")[1].trim();
-//        if (!JwtUtils..validate(token)) {
-//            chain.doFilter(request, response);
-//            return;
-//        }
+        if (!jwtTokenUtil.validate(token)) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         // Get user identity and set it on the spring security context
-        UserDetails userDetails = userRepo
+        UserDetails userDetails = (UserDetails) userRepo
                 .findById(jwtTokenUtil.getUsername(token))
                 .orElse(null);
 
