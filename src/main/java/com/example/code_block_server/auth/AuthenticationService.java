@@ -65,15 +65,16 @@ public class AuthenticationService {
         return userRepository.findByEmail(authentication.getName());
     }
 
-    private AuthPacket performLogin (UserEntity userEntity, LoginForm loginForm) {
-        boolean isValid = BCrypt.checkpw(loginForm.getPassword(), userEntity.getPassword());
+    private AuthPacket performLogin (UserEntity userEntity, LoginForm loginForm) throws GeneralSecurityException, IOException {
+        String decryptedPw = EncryptionUtils.decrypt(loginForm.getPassword());
+        boolean isValid = BCrypt.checkpw(decryptedPw, userEntity.getPassword());
         if (!isValid) {
             throw new IllegalArgumentException("There was an issue with the user name or password");
         }
 
         try {
             UsernamePasswordAuthenticationToken authInputToken =
-                    new UsernamePasswordAuthenticationToken(loginForm.getEmail(), loginForm.getPassword());
+                    new UsernamePasswordAuthenticationToken(loginForm.getEmail(), decryptedPw);
 
             authenticationManager.authenticate(authInputToken);
 
