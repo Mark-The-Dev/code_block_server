@@ -38,7 +38,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public AuthPacket userRegister(@RequestBody RegisterForm registerForm) {
+    public AuthPacket userRegister(@RequestBody RegisterForm registerForm) throws GeneralSecurityException, IOException {
         return authenticationService.processRegister(registerForm);
     }
 }

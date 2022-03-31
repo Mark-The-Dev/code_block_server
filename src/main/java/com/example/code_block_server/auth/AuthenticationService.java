@@ -38,9 +38,9 @@ public class AuthenticationService {
         return performLogin(userEntity, loginForm);
     }
 
-    public AuthPacket processRegister (RegisterForm registerForm) {
+    public AuthPacket processRegister (RegisterForm registerForm) throws GeneralSecurityException, IOException {
         ZonedDateTime newTime = ZonedDateTime.now( ZoneId.of("UTC+00:00"));
-        String hashedPW = BCrypt.hashpw(registerForm.getPassword(), BCrypt.gensalt());
+        String hashedPW = BCrypt.hashpw(EncryptionUtils.decrypt(registerForm.getPassword()), BCrypt.gensalt());
 
         UserEntity newUser = new UserEntity();
         newUser.setFirstName(registerForm.getFirstName());
